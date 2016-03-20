@@ -10,6 +10,10 @@ public class ShareManager : MonoBehaviour {
 	[DllImport("__Internal")]
 	private static extern bool ShareFile( string path );
 
+
+
+
+
 	public void shareFile(string path)
 	{
 		Debug.Log ("share:"+path);
@@ -20,7 +24,39 @@ public class ShareManager : MonoBehaviour {
 
 		#if UNITY_ANDROID
 
-		//Will Fail while uploading....
+		Debug.Log("Ae");
+		AndroidJavaClass player = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+		Debug.Log("Be");
+		AndroidJavaObject currentActivity = player.GetStatic<AndroidJavaObject>("currentActivity");
+		Debug.Log("Ce");
+		Debug.Log("Try to Share");
+		currentActivity.Call<string>("ShareVideo",path);
+		Debug.Log("Try to Share Done");
+	
+		/*
+		AndroidJavaClass mediaStoreClass = new AndroidJavaClass("android.provider.MediaStore");
+		Debug.Log("A-1");
+		AndroidJavaObject values = new AndroidJavaObject("android.content.ContentValues",3);
+
+		AndroidJavaObject DATA = new AndroidJavaClass("MediaStore.Video.Media").GetStatic<AndroidJavaObject>("DATA");
+
+		Debug.Log("DATA:"+DATA.Call<string>("toString"));
+
+		values.Call<string>("put", DATA, path);
+
+		Debug.Log("Content:"+values.Call<string>("toString"));
+		Debug.Log("A-2");
+
+
+		values.Call<string>("put", "_data", path);
+		Debug.Log("A-1-1");
+
+		AndroidJavaObject resolver = currentActivity.Call<AndroidJavaObject>("getContentResolver");
+		resolver.Call<AndroidJavaObject>("insert",mediaStoreClass.GetStatic<string>("MediaStore.Video.Media.EXTERNAL_CONTENT_URI"),values);
+
+
+
+
 		AndroidJavaClass intentClass = new AndroidJavaClass ("android.content.Intent");
 		AndroidJavaObject intentObject = new AndroidJavaObject ("android.content.Intent");
 		
@@ -32,13 +68,12 @@ public class ShareManager : MonoBehaviour {
 		
 		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), "Video");
 		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), resultURI);
-		
-		AndroidJavaClass unity = new AndroidJavaClass ("com.unity3d.player.UnityPlayer");
-		AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");
+
+
 		AndroidJavaObject jChooser = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, "Share");
 		currentActivity.Call("startActivity", jChooser);
 
-
+*/
 
 		/*
 		AndroidJavaClass unity = new AndroidJavaClass ("com.unity3d.player.UnityPlayer");
@@ -81,12 +116,15 @@ public class ShareManager : MonoBehaviour {
 		AndroidJavaObject fileObject = new AndroidJavaObject("java.io.File", path);// Set Image Path Here
 		AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("fromFile", fileObject);
 
+		Debug.Log("result?");
+		Debug.Log("Result Path:"+uriObject.Call<string>("toString"));
+
 		intentObject.Call<AndroidJavaObject>("addFlags", 0x00000040);
 		intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject);
-		AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-		AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");
-		currentActivity.Call("startActivity", intentObject);
-*/
+	//	AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+//		AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");
+		currentActivity.Call("startActivity", intentObject);*/
+
 
 		/*
 		Debug.Log("A");
