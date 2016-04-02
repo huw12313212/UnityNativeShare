@@ -14,8 +14,6 @@ public class RecordingExample : MonoBehaviour {
 	
 	void Start() 
 	{
-		Debug.Log("Supported:"+RedCandleEveryPlayExtention.IsRecordingSupported());
-
 		RedCandleEveryPlayExtention.SetMicrophoneEnable (true);
 	}
 

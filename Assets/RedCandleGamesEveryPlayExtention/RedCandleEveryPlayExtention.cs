@@ -10,6 +10,9 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 	[DllImport("__Internal")]
 	private static extern bool ShareFile( string path );
 
+	[DllImport("__Internal")]
+	private static extern bool MergeFile( string video ,string audio);
+
 	private static bool MicrophoneEnabled = false;
 
 	public static void SetMicrophoneEnable(bool enabled)
@@ -25,8 +28,6 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 		{
 			Everyplay.FaceCamStopSession();
 		}
-
-
 	}
 
 
@@ -47,10 +48,8 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 
 	public static void shareFile(string path)
 	{
-		Debug.Log ("share:"+path);
-
 		#if UNITY_IOS && !UNITY_EDITOR
-				ShareFile (path);
+				MergeAndShare ();
 		#endif
 
 		#if UNITY_ANDROID
@@ -72,6 +71,26 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 			
 			string[] directory = Directory.GetDirectories (dic);
 			string[] subdirectoryFiles =  Directory.GetFiles (directory[0],"*.mp4");
+			return subdirectoryFiles [0];
+		}
+		catch(System.Exception e)
+		{
+			return "";
+		}
+	}
+
+	public static string GetEveryPlayAudioFile()
+	{
+		try
+		{
+			#if UNITY_IOS
+			string dic = Application.persistentDataPath.Replace ("Documents", "tmp/Everyplay/session");
+			#elif UNITY_ANDROID
+			string dic = Application.temporaryCachePath+"/sessions";
+			#endif
+			
+			string[] directory = Directory.GetDirectories (dic);
+			string[] subdirectoryFiles =  Directory.GetFiles (directory[0],"*.m4a");
 			return subdirectoryFiles [0];
 		}
 		catch(System.Exception e)
@@ -115,5 +134,17 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 	public static void PlayLastRecord()
 	{
 		Everyplay.PlayLastRecording ();
+	}
+
+	private static void MergeAndShare()
+	{
+		string audio = GetEveryPlayAudioFile ();
+		string video = GetEveryPlayFile ();
+
+		Debug.Log ("Unity try to merge :"+video +":"+ audio);
+
+		MergeFile(video,audio);
+
+		//MergeFile
 	}
 }
