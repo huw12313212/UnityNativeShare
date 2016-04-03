@@ -56,6 +56,14 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 		AndroidJavaClass player = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = player.GetStatic<AndroidJavaObject>("currentActivity");
 		currentActivity.Call<string>("ShareVideo",path);
+		string tempPath = path.Replace(".mp4","withAudio.mp4");
+		if(File.Exists(tempPath))
+		{
+			File.Delete(tempPath);
+		}
+
+		currentActivity.Call<string>("MergeVideo",path,GetEveryPlayAudioFile(),tempPath);
+
 		#endif
 	}
 
