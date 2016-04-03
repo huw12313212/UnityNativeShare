@@ -14,7 +14,7 @@ public class RecordingExample : MonoBehaviour {
 	
 	void Start() 
 	{
-		RedCandleEveryPlayExtention.SetMicrophoneEnable (true);
+		RedCandleEveryPlayExtention.SetMicrophoneEnable (false);
 	}
 
 

@@ -49,20 +49,36 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 	public static void shareFile(string path)
 	{
 		#if UNITY_IOS && !UNITY_EDITOR
-				MergeAndShare ();
+
+		if(MicrophoneEnabled)
+		{
+			MergeAndShare ();
+		}
+		else
+		{
+			ShareFile(path);
+		}
+				
 		#endif
 
 		#if UNITY_ANDROID
 		AndroidJavaClass player = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
 		AndroidJavaObject currentActivity = player.GetStatic<AndroidJavaObject>("currentActivity");
-		currentActivity.Call<string>("ShareVideo",path);
 		string tempPath = path.Replace(".mp4","withAudio.mp4");
 		if(File.Exists(tempPath))
 		{
 			File.Delete(tempPath);
 		}
 
-		currentActivity.Call<string>("MergeVideo",path,GetEveryPlayAudioFile(),tempPath);
+		if(MicrophoneEnabled)
+		{
+			currentActivity.Call<string>("MergeVideo",path,GetEveryPlayAudioFile(),tempPath);
+
+		}
+		else
+		{
+			currentActivity.Call<string>("ShareVideo",path);
+		}
 
 		#endif
 	}
@@ -123,12 +139,10 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 		{
 			if (!Everyplay.FaceCamIsSessionRunning ()) 
 			{
-
 				Everyplay.FaceCamStartSession ();
 
 			}
 		}
-
 
 		Everyplay.StartRecording ();
 	}
@@ -149,10 +163,7 @@ public class RedCandleEveryPlayExtention : MonoBehaviour {
 		string audio = GetEveryPlayAudioFile ();
 		string video = GetEveryPlayFile ();
 
-		Debug.Log ("Unity try to merge :"+video +":"+ audio);
-
 		MergeFile(video,audio);
 
-		//MergeFile
 	}
 }
